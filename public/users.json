@@ -1,0 +1,19 @@
+[
+    {
+      "id": 1,
+      "name": "Joao Doe",
+      "rm": "123456",
+      "cpf": "12345678901",
+      "rg": "987654321",
+      "profession": "Software Engineer"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "rm": "654321",
+      "cpf": "10987654321",
+      "rg": "123456789",
+      "profession": "Data Scientist"
+    }
+  ]
+  
