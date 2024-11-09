@@ -1,37 +1,79 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import '../styles/globals.css';
+
 export default function LoginPage() {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold text-center text-white">User Login</h2>
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Username:</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 mt-2 text-gray-900 bg-gray-200 rounded-md focus:outline-none"
-                placeholder="Enter username"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Password:</label>
-              <input
-                type="password"
-                className="w-full px-4 py-2 mt-2 text-gray-900 bg-gray-200 rounded-md focus:outline-none"
-                placeholder="Enter password"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
-            >
-              Login
-            </button>
-          </form>
-          <p className="text-sm text-center text-gray-400">
-            Don't have an account? <a href="/register" className="text-blue-500 hover:underline">Sign up</a>
-          </p>
-        </div>
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Credenciais mocadas
+    const mockUsername = "admin";
+    const mockPassword = "123456";
+
+    if (formData.username === mockUsername && formData.password === mockPassword) {
+      // Redireciona para a página de User Management após o login bem-sucedido
+      router.push("/user-management");
+    } else {
+      setError("Credenciais inválidas. Tente novamente.");
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-page">
+      <div className="w-full max-w-md container-bg p-8 rounded-lg shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-color mb-4">User Login</h2>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-medium text-color mb-1">Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              placeholder="   Enter Username"
+              className="form-input input-field"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-color mb-1">Password:</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="   Enter Password"
+              className="form-input input-field"
+            />
+          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            className="button-primary w-full"
+          >
+            Login
+          </button>
+        </form>
+        <p className="text-sm text-center text-secondary mt-3">
+          Don't have an account?{" "}
+          <a href="/register" className="link">
+            Sign up
+          </a>
+        </p>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
