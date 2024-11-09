@@ -121,6 +121,9 @@ export default function UserManagementPage() {
           <div className="text-center text-secondary">Carregando usuários...</div>
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
+        ) : users.length === 0 ? (
+          // Mensagem quando não houver usuários na lista
+          <div className="text-center text-secondary">Nenhum usuário encontrado.</div>
         ) : (
           <table className="w-full text-sm text-left">
             <thead className="text-xs table-header">
