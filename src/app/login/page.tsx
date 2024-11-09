@@ -25,7 +25,10 @@ export default function LoginPage() {
     const mockPassword = "123456";
 
     if (formData.username === mockUsername && formData.password === mockPassword) {
-      // Redireciona para a página de User Management após o login bem-sucedido
+      // Salva o token de autenticação no localStorage
+      localStorage.setItem("authToken", "authenticated");
+
+      // Redireciona para a página de User Management
       router.push("/user-management");
     } else {
       setError("Credenciais inválidas. Tente novamente.");

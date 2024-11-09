@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 import { BiSolidEdit } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import EditUserModal from '../components/EditUserModal';
@@ -21,24 +22,36 @@ export default function UserManagementPage() {
   const [error, setError] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deleting, setDeleting] = useState<number | null>(null); // ID do usuário que está sendo deletado
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Define o estado de autenticação
+  const router = useRouter();
 
   useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const response = await fetch('/api/users');
-        if (!response.ok) throw new Error("Falha ao buscar usuários");
-        const data = await response.json();
-        setUsers(data);
-        setError(null);
-      } catch (error) {
-        setError("Erro ao carregar usuários. Tente novamente mais tarde.");
-      } finally {
-        setLoading(false);
-      }
-    }
+    // Verificação de autenticação
+    const authToken = localStorage.getItem("authToken");
 
-    fetchUsers();
-  }, []);
+    if (!authToken) {
+      // Se o token não existir, indica que o usuário não está autenticado
+      setIsAuthenticated(false);
+      setLoading(false);
+    } else {
+      // Busca os usuários após verificar a autenticação
+      fetchUsers();
+    }
+  }, [router]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      if (!response.ok) throw new Error("Falha ao buscar usuários");
+      const data = await response.json();
+      setUsers(data);
+      setError(null);
+    } catch (error) {
+      setError("Erro ao carregar usuários. Tente novamente mais tarde.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatCPF = (cpf: string) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
@@ -66,9 +79,42 @@ export default function UserManagementPage() {
     setEditingUser(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    router.push("/");
+  };
+
+  if (!isAuthenticated) {
+    // Renderiza a mensagem de erro e o botão para redirecionar ao login
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-page">
+        <div className="w-full max-w-md container-bg p-8 rounded-lg shadow-lg text-center">
+          <h2 className="text-2xl font-bold text-color mb-4">Acesso Negado</h2>
+          <p className="text-sm text-secondary mb-6">
+            Você precisa estar logado para acessar esta página.
+          </p>
+          <button
+            onClick={() => router.push("/login")}
+            className="button-primary w-full"
+          >
+            Ir para Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: "var(--background)" }}>
-      <div className="w-full max-w-6xl p-8 space-y-6 container-bg">
+      <div className="w-full max-w-6xl p-8 space-y-6 container-bg relative">
+        {/* Botão de logout discreto */}
+        <button
+          onClick={handleLogout}
+          className="absolute top-4 right-4 text-sm text-secondary hover:underline"
+        >
+          Logout
+        </button>
+
         <h2 className="text-3xl font-bold text-center" style={{ color: "var(--text-color)" }}>User Management</h2>
 
         {loading ? (
