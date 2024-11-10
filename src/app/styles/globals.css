@@ -52,12 +52,12 @@ body {
 
 /* Table row and cell styling */
 .table-cell {
-  color: var(--text-color);
+  color: #cccccc;
 }
 
 .table-row {
   background-color: #383838;
-  border-bottom: 1px solid var(--table-row-border);
+  border-bottom: 1px solid #3d3d3d;
 }
 
 /* Form input styling */
