@@ -108,66 +108,70 @@ body {
     text-wrap: balance;
   }
 }
+
 .input-field {
   width: 100%;
-  padding: 0.5rem; /* Espaçamento interno */
+  padding: 0.5rem;
   margin-top: 0.5rem;
-  background-color: #2c2c2c; /* Cor de fundo do campo */
-  color: #e0e0e0; /* Cor do texto do campo */
-  border: 1px solid #444444; /* Leve borda */
-  border-radius: 4px; /* Borda arredondada */
+  background-color: var(--input-background); /* Cor de fundo consistente */
+  color: #e0e0e0;
+  border: 1px solid #444444;
+  border-radius: 4px;
   transition: border-color 0.2s;
 }
+
 .input-field::placeholder {
-  color: var(--text-color); /* Cor do texto do placeholder */
-  opacity: 0.7; /* Esconde o placeholder ao focar no campo */
+  color: var(--text-color);
+  opacity: 0.7;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #666666; /* Cor da borda ao focar */
+  border-color: #666666;
 }
 
-.input-file {
-  width: 100%;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background-color: #2c2c2c;
-  color: #e0e0e0;
-  border: 1px solid #444444;
-  border-radius: 4px;
-}
 .input-file-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem;
-  background-color: var(--input-background);
-  border: 1px solid var(--table-row-border);
+  background-color: var(--input-background); /* Mesma cor de fundo dos demais inputs */
+  border: 1px solid #444444;
   border-radius: 4px;
 }
 
 .input-file-button {
-  background-color: var(--button-bg);
-  color: var(--text-color);
-  padding: 0.5rem 1rem;
-  border: none;
+  width: 80px; /* Define largura do botão */
+  height: 100%; /* Ajusta a altura para preencher o espaço vertical */
+  background-color: white; /* Fundo branco */
+  color: #000;
+  border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Remove padding adicional */
+  margin-left: 15px;
   transition: background-color 0.3s;
 }
 
 .input-file-button:hover {
-  background-color: var(--button-hover-bg);
+  background-color: #f0f0f0; /* Cor de fundo ao passar o mouse */
 }
 
 .input-file-text {
   flex-grow: 1;
   padding: 0.5rem;
-  background-color: transparent;
+  background-color: var(--input-background); /* Mesma cor dos demais inputs */
   color: var(--text-color);
   border: none;
-  text-align: center;
-  outline: none;
-  font-size: 0.875rem; /* Ajuste do tamanho da fonte */
+  text-align: left;
+  font-size: 0.875rem;
+  outline: none; /* Remove o contorno */
+  pointer-events: none; /* Desativa a interação */
+}
+.text-secondary {
+  color: #8a8a8a; /* Cor cinza clara e sutil */
+  font-size: 0.875rem; /* Tamanho da fonte menor */ /* Reduz ligeiramente a opacidade para um efeito mais suave */
 }
