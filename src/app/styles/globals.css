@@ -175,3 +175,15 @@ body {
   color: #8a8a8a; /* Cor cinza clara e sutil */
   font-size: 0.875rem; /* Tamanho da fonte menor */ /* Reduz ligeiramente a opacidade para um efeito mais suave */
 }
+.button-home {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--button-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+.button-home:hover {
+  background-color: var(--button-hover-bg);
+}
