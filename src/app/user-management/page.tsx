@@ -5,8 +5,14 @@ import { useRouter } from "next/navigation";
 import { BiSolidEdit } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import EditUserModal from '../components/EditUserModal';
+import { formatCPF, formatRG } from '../utils/formatters'; // Formatadores de CPF e RG
 import '../styles/globals.css';
 
+// Mensagens de erro e acesso
+const ERROR_FETCH_USERS = "Erro ao carregar usuários. Tente novamente mais tarde.";
+const ACCESS_DENIED_MESSAGE = "Esta página requer autenticação.";
+
+// Definindo tipo de dados para o usuário
 type User = {
   id: number;
   name: string;
@@ -17,28 +23,32 @@ type User = {
 };
 
 export default function UserManagementPage() {
+  // Estados para dados e controle de interface
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [deleting, setDeleting] = useState<number | null>(null); // ID do usuário que está sendo deletado
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Define o estado de autenticação
+  const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // Indica se o usuário está autenticado
+
   const router = useRouter();
 
+  // Verifica autenticação na montagem do componente
   useEffect(() => {
-    // Verificação de autenticação
     const authToken = localStorage.getItem("authToken");
+    setIsAuthenticated(!!authToken); // Define `true` se existir `authToken`, senão `false`
+  }, []);
 
-    if (!authToken) {
-      // Se o token não existir, indica que o usuário não está autenticado
-      setIsAuthenticated(false);
-      setLoading(false);
-    } else {
-      // Busca os usuários após verificar a autenticação
+  // Carrega usuários se autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
       fetchUsers();
+    } else if (isAuthenticated === false) {
+      setLoading(false); // Para o carregamento se o usuário não está autenticado
     }
-  }, [router]);
+  }, [isAuthenticated]);
 
+  // Busca usuários do backend
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/users');
@@ -46,59 +56,51 @@ export default function UserManagementPage() {
       const data = await response.json();
       setUsers(data);
       setError(null);
-    } catch (error) {
-      setError("Erro ao carregar usuários. Tente novamente mais tarde.");
+    } catch {
+      setError(ERROR_FETCH_USERS);
     } finally {
       setLoading(false);
     }
   };
 
-  const formatCPF = (cpf: string) => {
-    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-  };
-
-  const formatRG = (rg: string) => {
-    const digitsOnly = rg.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-    return digitsOnly.replace(/(\d{1})(\d{3})(\d{3})(\d{1})/, "$1.$2.$3-$4");
-  };
-
+  // Deleta um usuário
   const deleteUser = async (id: number) => {
-    setDeleting(id);
-    // Simulação de atraso para mostrar o feedback de deleção
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const updatedUsers = users.filter(user => user.id !== id);
-    setUsers(updatedUsers);
-    setDeleting(null);
+    setDeletingUserId(id);
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Delay para feedback visual
+    setUsers(users.filter(user => user.id !== id));
+    setDeletingUserId(null);
   };
 
-  const openEditModal = (user: User) => {
-    setEditingUser(user);
+  // Salva edição do usuário
+  const saveUser = async (updatedUser: User) => {
+    try {
+      const response = await fetch(`/api/users/${updatedUser.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      });
+  
+      if (!response.ok) throw new Error("Erro ao atualizar o usuário");
+  
+      setUsers(users.map(user => (user.id === updatedUser.id ? updatedUser : user)));
+      setEditingUser(null);
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+      setError("Erro ao atualizar o usuário. Tente novamente.");
+    }
   };
 
-  const saveUser = (updatedUser: User) => {
-    setUsers(users.map(user => (user.id === updatedUser.id ? updatedUser : user)));
-    setEditingUser(null);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    router.push("/");
-  };
-
-  if (!isAuthenticated) {
-    // Renderiza a mensagem de erro e o botão para redirecionar ao login
+  // Exibe a mensagem de acesso restrito se o usuário não estiver autenticado
+  if (isAuthenticated === false) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-page">
         <div className="w-full max-w-md container-bg p-8 rounded-lg shadow-lg text-center">
-          <h2 className="text-2xl font-bold text-color mb-4">Acesso Negado</h2>
-          <p className="text-sm text-secondary mb-6">
-            Você precisa estar logado para acessar esta página.
-          </p>
-          <button
-            onClick={() => router.push("/login")}
-            className="button-primary w-full"
-          >
-            Ir para Login
+          <h2 className="text-2xl font-bold text-color mb-4">Acesso Restrito</h2>
+          <p className="text-sm text-secondary mb-6">{ACCESS_DENIED_MESSAGE}</p>
+          <button onClick={() => router.push("/login")} className="button-primary w-full">
+            Fazer Login
           </button>
         </div>
       </div>
@@ -108,14 +110,6 @@ export default function UserManagementPage() {
   return (
     <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: "var(--background)" }}>
       <div className="w-full max-w-6xl p-8 space-y-6 container-bg relative">
-        {/* Botão de logout discreto */}
-        <button
-          onClick={handleLogout}
-          className="absolute top-4 right-4 text-sm text-secondary hover:underline"
-        >
-          Logout
-        </button>
-
         <h2 className="text-3xl font-bold text-center" style={{ color: "var(--text-color)" }}>User Management</h2>
 
         {loading ? (
@@ -123,7 +117,7 @@ export default function UserManagementPage() {
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : users.length === 0 ? (
-          // Mensagem quando não houver usuários na lista
+          // Mostra mensagem se lista de usuários estiver vazia
           <div className="text-center text-secondary">Nenhum usuário encontrado.</div>
         ) : (
           <table className="w-full text-sm text-left">
@@ -148,15 +142,15 @@ export default function UserManagementPage() {
                   <td className="px-6 py-4 text-left table-cell">{formatRG(user.rg)}</td>
                   <td className="px-6 py-4 text-left table-cell">{user.profession}</td>
                   <td className="px-6 py-4 flex justify-center items-center gap-2">
-                    <button className="button-icon" onClick={() => openEditModal(user)}>
+                    <button className="button-icon" onClick={() => setEditingUser(user)}>
                       <BiSolidEdit size={20} />
                     </button>
                     <button
-                      className={`button-icon ${deleting === user.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      onClick={() => !deleting && deleteUser(user.id)}
-                      disabled={deleting === user.id}
+                      className={`button-icon ${deletingUserId === user.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => !deletingUserId && deleteUser(user.id)}
+                      disabled={deletingUserId === user.id}
                     >
-                      {deleting === user.id ? "Deletando..." : <BsTrash size={20} />}
+                      {deletingUserId === user.id ? "Deletando..." : <BsTrash size={20} />}
                     </button>
                   </td>
                 </tr>

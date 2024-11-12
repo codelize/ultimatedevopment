@@ -54,38 +54,5 @@
     "cpf": "21098765432",
     "rg": "21321331",
     "profession": "Network Administrator"
-  },
-  {
-    "id": 8,
-    "name": "Beatriz Almeida",
-    "rm": "405060",
-    "cpf": "10928374650",
-    "rg": "13213231",
-    "profession": "QA Engineer"
-  },
-  {
-    "id": 9,
-    "name": "Ricardo Mendes",
-    "rm": "607080",
-    "cpf": "10293847560",
-    "rg": "32132121",
-    "profession": "Backend Developer"
-  },
-  {
-    "id": 10,
-    "name": "Fernanda Costa",
-    "rm": "809010",
-    "cpf": "98765432109",
-    "rg": "23132113",
-    "profession": "Cybersecurity Specialist"
-  },
-  {
-    "id": 11,
-    "name": "Leonardo Ferreira",
-    "rm": "551509",
-    "cpf": "48457908820",
-    "rg": "57017089",
-    "profession": "Consultor Comercial",
-    "image": null
   }
 ]
