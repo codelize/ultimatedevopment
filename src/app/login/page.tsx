@@ -71,9 +71,9 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="text-sm text-center text-secondary mt-3">
-          Don't have an account?{" "}
+        Want to add a user?{" "}
           <a href="/register" className="link">
-            Sign up
+          Click here
           </a>
         </p>
       </div>

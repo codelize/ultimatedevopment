@@ -58,7 +58,8 @@ export default function UserManagementPage() {
   };
 
   const formatRG = (rg: string) => {
-    return rg.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, "$1.$2.$3-$4");
+    const digitsOnly = rg.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+    return digitsOnly.replace(/(\d{1})(\d{3})(\d{3})(\d{1})/, "$1.$2.$3-$4");
   };
 
   const deleteUser = async (id: number) => {

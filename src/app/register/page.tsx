@@ -31,9 +31,28 @@ export default function RegisterPage() {
     fileInputRef.current.click();
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Formulário enviado:", formData);
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert("Usuário registrado com sucesso!");
+        window.location.href = "/login";
+      } else {
+        alert("Erro ao registrar usuário.");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      alert("Erro ao registrar usuário.");
+    }
   };
 
   return (
@@ -48,7 +67,7 @@ export default function RegisterPage() {
               name="id"
               value={formData.id}
               onChange={handleInputChange}
-              placeholder="Enter ID "
+              placeholder="Enter ID"
               className="form-input input-field"
             />
           </div>
@@ -59,7 +78,7 @@ export default function RegisterPage() {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Enter Name "
+              placeholder="Enter Name"
               className="form-input input-field"
             />
           </div>
@@ -70,7 +89,7 @@ export default function RegisterPage() {
               name="rm"
               value={formData.rm}
               onChange={handleInputChange}
-              placeholder="Enter RM "
+              placeholder="Enter RM"
               className="form-input input-field"
             />
           </div>
@@ -81,7 +100,7 @@ export default function RegisterPage() {
               name="cpf"
               value={formData.cpf}
               onChange={handleInputChange}
-              placeholder="Enter CPF "
+              placeholder="Enter CPF"
               className="form-input input-field"
             />
           </div>
@@ -92,7 +111,7 @@ export default function RegisterPage() {
               name="rg"
               value={formData.rg}
               onChange={handleInputChange}
-              placeholder="Enter RG "
+              placeholder="Enter RG"
               className="form-input input-field"
             />
           </div>
@@ -103,7 +122,7 @@ export default function RegisterPage() {
               name="profession"
               value={formData.profession}
               onChange={handleInputChange}
-              placeholder="Enter Profession "
+              placeholder="Enter Profession"
               className="form-input input-field"
             />
           </div>
@@ -131,10 +150,7 @@ export default function RegisterPage() {
               />
             </div>
           </div>
-          <button
-            type="submit"
-            className="button-primary"
-          >
+          <button type="submit" className="button-primary">
             Register
           </button>
         </form>

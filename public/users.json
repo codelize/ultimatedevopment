@@ -4,7 +4,7 @@
     "name": "Carlos Silva",
     "rm": "112233",
     "cpf": "32165498700",
-    "rg": "123123123",
+    "rg": "12312312",
     "profession": "Web Developer"
   },
   {
@@ -12,7 +12,7 @@
     "name": "Ana Oliveira",
     "rm": "334455",
     "cpf": "12378945601",
-    "rg": "321321321",
+    "rg": "32132132",
     "profession": "System Analyst"
   },
   {
@@ -20,7 +20,7 @@
     "name": "Pedro Souza",
     "rm": "556677",
     "cpf": "45612378901",
-    "rg": "213213213",
+    "rg": "21321321",
     "profession": "DevOps Engineer"
   },
   {
@@ -28,7 +28,7 @@
     "name": "Maria Lima",
     "rm": "778899",
     "cpf": "78945612300",
-    "rg": "231231231",
+    "rg": "23123123",
     "profession": "UI/UX Designer"
   },
   {
@@ -36,7 +36,7 @@
     "name": "Lucas Rocha",
     "rm": "990011",
     "cpf": "65498732100",
-    "rg": "132132132",
+    "rg": "13213213",
     "profession": "Machine Learning Engineer"
   },
   {
@@ -44,7 +44,7 @@
     "name": "Clara Nunes",
     "rm": "102030",
     "cpf": "98732165401",
-    "rg": "312312312",
+    "rg": "31231231",
     "profession": "Product Manager"
   },
   {
@@ -52,7 +52,7 @@
     "name": "Paulo Gonçalves",
     "rm": "203040",
     "cpf": "21098765432",
-    "rg": "213213312",
+    "rg": "21321331",
     "profession": "Network Administrator"
   },
   {
@@ -60,7 +60,7 @@
     "name": "Beatriz Almeida",
     "rm": "405060",
     "cpf": "10928374650",
-    "rg": "132132312",
+    "rg": "13213231",
     "profession": "QA Engineer"
   },
   {
@@ -68,7 +68,7 @@
     "name": "Ricardo Mendes",
     "rm": "607080",
     "cpf": "10293847560",
-    "rg": "321321213",
+    "rg": "32132121",
     "profession": "Backend Developer"
   },
   {
@@ -76,7 +76,16 @@
     "name": "Fernanda Costa",
     "rm": "809010",
     "cpf": "98765432109",
-    "rg": "231321132",
+    "rg": "23132113",
     "profession": "Cybersecurity Specialist"
+  },
+  {
+    "id": 11,
+    "name": "Leonardo Ferreira",
+    "rm": "551509",
+    "cpf": "48457908820",
+    "rg": "57017089",
+    "profession": "Consultor Comercial",
+    "image": null
   }
 ]
