@@ -3,51 +3,90 @@
 import { useState, useRef } from "react";
 import '../styles/globals.css';
 
+// Dados iniciais do formulário
+const initialFormData = {
+  id: "",
+  name: "",
+  rm: "",
+  cpf: "",
+  rg: "",
+  profession: "",
+  image: null,
+};
+
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    id: "",
-    name: "",
-    rm: "",
-    cpf: "",
-    rg: "",
-    profession: "",
-    image: null,
-  });
+  const [formData, setFormData] = useState(initialFormData);
   const [fileName, setFileName] = useState("Nenhum arquivo selecionado.");
+  const [errors, setErrors] = useState({}); // Estado para armazenar mensagens de erro
+  const [formSubmitted, setFormSubmitted] = useState(false); // Estado para controle de submissão
   const fileInputRef = useRef(null);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+  // Manipulador de mudanças nos campos de texto
+  const handleInputChange = ({ target: { name, value } }) => {
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    if (formSubmitted) validateForm({ ...formData, [name]: value }); // Revalida em tempo real se já foi submetido
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setFormData({ ...formData, image: file });
+  // Manipulador de seleção de arquivo de imagem
+  const handleFileChange = ({ target: { files } }) => {
+    const file = files[0];
+    setFormData((prevData) => ({ ...prevData, image: file }));
     setFileName(file ? file.name : "Nenhum arquivo selecionado.");
   };
 
+  // Ação para abrir o seletor de arquivos
   const handleFileUpload = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
+  // Validação dos campos obrigatórios e retorno das mensagens de erro
+  const validateForm = (data) => {
+    const { id, name, rm, cpf, rg, profession } = data;
+    const newErrors = {};
+    
+    if (!id) {
+      newErrors.id = "ID é obrigatório";
+    } else if (isNaN(id)) {
+      newErrors.id = "ID deve ser um número válido";
+    }
+
+    if (!name) newErrors.name = "Nome é obrigatório";
+    if (!rm) newErrors.rm = "RM é obrigatório";
+    if (!cpf) newErrors.cpf = "CPF é obrigatório";
+    if (!rg) newErrors.rg = "RG é obrigatório";
+    if (!profession) newErrors.profession = "Profissão é obrigatória";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Envio do formulário
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setFormSubmitted(true); // Marca o formulário como submetido
+
+    if (!validateForm(formData)) return; // Impede o envio se o formulário não for válido
 
     try {
       const response = await fetch("/api/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         alert("Usuário registrado com sucesso!");
-        window.location.href = "/login";
+        window.location.href = "/login"; // Redireciona para o login
       } else {
-        alert("Erro ao registrar usuário.");
+        const errorData = await response.json();
+        if (errorData && errorData.error === "ID já registrado.") {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            id: `ID já registrado. Sugestão: ${errorData.suggestedId}`,
+          }));
+        } else {
+          alert("Erro ao registrar usuário. Verifique os dados.");
+        }
       }
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
@@ -55,112 +94,69 @@ export default function RegisterPage() {
     }
   };
 
+  // Renderização do formulário
   return (
     <div className="flex items-center justify-center min-h-screen bg-page">
       <div className="w-full max-w-lg container-bg p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold text-center text-color mb-4">User Registration</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">ID:</label>
-            <input
-              type="text"
-              name="id"
-              value={formData.id}
-              onChange={handleInputChange}
-              placeholder="Enter ID"
-              className="form-input input-field"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Enter Name"
-              className="form-input input-field"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">RM:</label>
-            <input
-              type="text"
-              name="rm"
-              value={formData.rm}
-              onChange={handleInputChange}
-              placeholder="Enter RM"
-              className="form-input input-field"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">CPF:</label>
-            <input
-              type="text"
-              name="cpf"
-              value={formData.cpf}
-              onChange={handleInputChange}
-              placeholder="Enter CPF"
-              className="form-input input-field"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">RG:</label>
-            <input
-              type="text"
-              name="rg"
-              value={formData.rg}
-              onChange={handleInputChange}
-              placeholder="Enter RG"
-              className="form-input input-field"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">Profession:</label>
-            <input
-              type="text"
-              name="profession"
-              value={formData.profession}
-              onChange={handleInputChange}
-              placeholder="Enter Profession"
-              className="form-input input-field"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-color mb-1">Image:</label>
-            <div className="input-file-group">
-              <button
-                type="button"
-                onClick={handleFileUpload}
-                className="input-file-button"
-              >
-                Procurar...
-              </button>
-              <input
-                type="text"
-                value={fileName}
-                readOnly
-                className="input-file-text"
-              />
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div>
-          </div>
+          {renderInput("ID", "id", formData.id, handleInputChange, errors.id, formSubmitted)}
+          {renderInput("Name", "name", formData.name, handleInputChange, errors.name, formSubmitted)}
+          {renderInput("RM", "rm", formData.rm, handleInputChange, errors.rm, formSubmitted)}
+          {renderInput("CPF", "cpf", formData.cpf, handleInputChange, errors.cpf, formSubmitted)}
+          {renderInput("RG", "rg", formData.rg, handleInputChange, errors.rg, formSubmitted)}
+          {renderInput("Profession", "profession", formData.profession, handleInputChange, errors.profession, formSubmitted)}
+          {renderFileInput(fileName, handleFileUpload, handleFileChange, fileInputRef)}
           <button type="submit" className="button-primary">
             Register
           </button>
         </form>
-        <p className="text-sm text-center text-secondary mt-3">
-          Already have an account?{" "}
-          <a href="/login" className="link">
-            Log in
-          </a>
-        </p>
+        <LoginRedirect />
       </div>
     </div>
+  );
+}
+
+// Renderização de um campo de entrada de texto com etiqueta e mensagem de erro
+function renderInput(label, name, value, onChange, error, formSubmitted) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-color mb-1">{label}:</label>
+      <input
+        type="text"
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={`Enter ${label}`}
+        className="form-input input-field"
+      />
+      {formSubmitted && error && <p className="text-xs text-red-500 mt-1">{error}</p>} {/* Mensagem de erro */}
+    </div>
+  );
+}
+
+// Renderização do seletor de arquivo com botão
+function renderFileInput(fileName, handleFileUpload, handleFileChange, fileInputRef) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-color mb-1">Image:</label>
+      <div className="input-file-group">
+        <button type="button" onClick={handleFileUpload} className="input-file-button">
+          Procurar...
+        </button>
+        <input type="text" value={fileName} readOnly className="input-file-text" />
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+      </div>
+    </div>
+  );
+}
+
+// Componente para redirecionamento ao login
+function LoginRedirect() {
+  return (
+    <p className="text-sm text-center text-secondary mt-3">
+      Already have an account?{" "}
+      <a href="/login" className="link">Log in</a>
+    </p>
   );
 }

@@ -62,11 +62,11 @@ export default function UserManagementPage() {
       setLoading(false);
     }
   };
-
   // Deleta um usuário
   const deleteUser = async (id: number) => {
     setDeletingUserId(id);
     await new Promise((resolve) => setTimeout(resolve, 500)); // Delay para feedback visual
+
     setUsers(users.filter(user => user.id !== id));
     setDeletingUserId(null);
   };
