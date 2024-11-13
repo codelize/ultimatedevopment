@@ -17,14 +17,14 @@ const initialFormData = {
 export default function RegisterPage() {
   const [formData, setFormData] = useState(initialFormData);
   const [fileName, setFileName] = useState("Nenhum arquivo selecionado.");
-  const [errors, setErrors] = useState({}); // Estado para armazenar mensagens de erro
+  const [errors, setErrors] = useState({}); // Estado para mensagens de erro
   const [formSubmitted, setFormSubmitted] = useState(false); // Estado para controle de submissão
   const fileInputRef = useRef(null);
 
   // Manipulador de mudanças nos campos de texto
   const handleInputChange = ({ target: { name, value } }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-    if (formSubmitted) validateForm({ ...formData, [name]: value }); // Revalida em tempo real se já foi submetido
+    if (formSubmitted) validateForm({ ...formData, [name]: value });
   };
 
   // Manipulador de seleção de arquivo de imagem
@@ -43,13 +43,8 @@ export default function RegisterPage() {
   const validateForm = (data) => {
     const { id, name, rm, cpf, rg, profession } = data;
     const newErrors = {};
-    
-    if (!id) {
-      newErrors.id = "ID é obrigatório";
-    } else if (isNaN(id)) {
-      newErrors.id = "ID deve ser um número válido";
-    }
 
+    if (!id) newErrors.id = "ID é obrigatório";
     if (!name) newErrors.name = "Nome é obrigatório";
     if (!rm) newErrors.rm = "RM é obrigatório";
     if (!cpf) newErrors.cpf = "CPF é obrigatório";
@@ -63,9 +58,9 @@ export default function RegisterPage() {
   // Envio do formulário
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setFormSubmitted(true); // Marca o formulário como submetido
+    setFormSubmitted(true);
 
-    if (!validateForm(formData)) return; // Impede o envio se o formulário não for válido
+    if (!validateForm(formData)) return;
 
     try {
       const response = await fetch("/api/users", {
@@ -76,17 +71,9 @@ export default function RegisterPage() {
 
       if (response.ok) {
         alert("Usuário registrado com sucesso!");
-        window.location.href = "/login"; // Redireciona para o login
+        window.location.href = "/login";
       } else {
-        const errorData = await response.json();
-        if (errorData && errorData.error === "ID já registrado.") {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            id: `ID já registrado. Sugestão: ${errorData.suggestedId}`,
-          }));
-        } else {
-          alert("Erro ao registrar usuário. Verifique os dados.");
-        }
+        alert("Erro ao registrar usuário. Verifique os dados.");
       }
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
@@ -94,7 +81,6 @@ export default function RegisterPage() {
     }
   };
 
-  // Renderização do formulário
   return (
     <div className="flex items-center justify-center min-h-screen bg-page">
       <div className="w-full max-w-lg container-bg p-8 rounded-lg shadow-lg">
@@ -107,9 +93,7 @@ export default function RegisterPage() {
           {renderInput("RG", "rg", formData.rg, handleInputChange, errors.rg, formSubmitted)}
           {renderInput("Profession", "profession", formData.profession, handleInputChange, errors.profession, formSubmitted)}
           {renderFileInput(fileName, handleFileUpload, handleFileChange, fileInputRef)}
-          <button type="submit" className="button-primary">
-            Register
-          </button>
+          <button type="submit" className="button-primary">Register</button>
         </form>
         <LoginRedirect />
       </div>
@@ -117,7 +101,7 @@ export default function RegisterPage() {
   );
 }
 
-// Renderização de um campo de entrada de texto com etiqueta e mensagem de erro
+// Função para renderizar um campo de entrada com etiqueta e mensagem de erro
 function renderInput(label, name, value, onChange, error, formSubmitted) {
   return (
     <div>
@@ -127,15 +111,15 @@ function renderInput(label, name, value, onChange, error, formSubmitted) {
         name={name}
         value={value}
         onChange={onChange}
-        placeholder={`Enter ${label}`}
+        placeholder={`   Enter ${label}`} // Adiciona espaços extras no início do placeholder
         className="form-input input-field"
       />
-      {formSubmitted && error && <p className="text-xs text-red-500 mt-1">{error}</p>} {/* Mensagem de erro */}
+      {formSubmitted && error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   );
 }
 
-// Renderização do seletor de arquivo com botão
+// Função para renderizar o seletor de arquivo com botão
 function renderFileInput(fileName, handleFileUpload, handleFileChange, fileInputRef) {
   return (
     <div>
@@ -151,12 +135,11 @@ function renderFileInput(fileName, handleFileUpload, handleFileChange, fileInput
   );
 }
 
-// Componente para redirecionamento ao login
+// Componente de redirecionamento para o login
 function LoginRedirect() {
   return (
     <p className="text-sm text-center text-secondary mt-3">
-      Already have an account?{" "}
-      <a href="/login" className="link">Log in</a>
+      Already have an account? <a href="/login" className="link">Log in</a>
     </p>
   );
 }
