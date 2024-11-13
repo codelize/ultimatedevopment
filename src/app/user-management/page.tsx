@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUserManagement, User } from '../hooks/useUserManagement';
 import UserTable from '../components/UserTable';
 import EditUserModal from '../components/EditUserModal';
+import { formatCPF, formatRG } from '../utils/formatters';
 
 export default function UserManagementPage() {
   const { users, loading, error, isAuthenticated, updateUser, deleteUser } = useUserManagement();
@@ -44,6 +45,12 @@ export default function UserManagementPage() {
     );
   }
 
+  const formattedUsers = users.map(user => ({
+    ...user,
+    cpf: formatCPF(user.cpf),
+    rg: formatRG(user.rg),
+  }));
+
   const handleEditUser = (user: User) => setEditingUser(user);
   const handleDeleteUser = (id: number) => deleteUser(id);
   const handleSaveUser = (updatedUser: User) => {
@@ -59,8 +66,10 @@ export default function UserManagementPage() {
           <p className="text-center text-secondary">Carregando usuários...</p>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
+        ) : formattedUsers.length === 0 ? (
+          <p className="text-center text-secondary">Nenhum usuário encontrado.</p>
         ) : (
-          <UserTable users={users} onEdit={handleEditUser} onDelete={handleDeleteUser} />
+          <UserTable users={formattedUsers} onEdit={handleEditUser} onDelete={handleDeleteUser} />
         )}
       </div>
       {editingUser && (

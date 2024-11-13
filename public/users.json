@@ -53,15 +53,6 @@
     "rm": "203040",
     "cpf": "21098765432",
     "rg": "21321331",
-    "profession": "Network Administratorr"
-  },
-  {
-    "id": "8",
-    "name": "Leonardo Ferreira",
-    "rm": "551509",
-    "cpf": "48457908820",
-    "rg": "57017089",
-    "profession": "Consultor Comercia",
-    "image": null
+    "profession": "Network Administrator"
   }
 ]

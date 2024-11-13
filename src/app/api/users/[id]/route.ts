@@ -10,8 +10,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const users = JSON.parse(fileContents);
 
-  // Encontra o índice do usuário a ser atualizado
-  const userIndex = users.findIndex((user: any) => user.id === Number(id));
+  // Verifica se o ID é numérico e busca o índice do usuário pelo ID
+  const userIndex = users.findIndex((user: any) => String(user.id) === id);
   if (userIndex === -1) {
     return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
   }
